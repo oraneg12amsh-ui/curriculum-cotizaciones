@@ -375,11 +375,19 @@ service cloud.firestore {
             if (!user || !data) return;
             setIsSaving(true);
             try {
+              // SANITIZACIÓN: Limpiar datos antes de enviar a Firestore para evitar "invalid-argument"
+              const cleanData = JSON.parse(JSON.stringify(data));
+              
               const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'portfolio_content', 'main');
-              await setDoc(docRef, data);
+              await setDoc(docRef, cleanData);
               setIsSaving(false);
               setIsEditing(false);
-            } catch (error) { console.error("Error guardando:", error); setIsSaving(false); alert("Error al guardar: " + error.code); }
+              alert("¡Cambios guardados exitosamente!");
+            } catch (error) { 
+              console.error("Error guardando:", error); 
+              setIsSaving(false); 
+              alert("Error al guardar: " + (error.code || error.message)); 
+            }
           };
 
           const confirmBooking = async () => {
@@ -476,7 +484,7 @@ service cloud.firestore {
 
           return (
             <div className="min-h-screen bg-slate-50 text-slate-800 font-sans selection:bg-blue-200">
-              <div className="fixed inset-0 z-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 20.5V18H0v-2h20v-2H0V8h20V6H0V4h20V2H0V0h22v20h2V0h2v20h2V0h2v20h2V0h2v20h2v2H20v-1.5zM0 20h2v20H0V20zm4 0h2v20H4V20zm4 0h2v20H8V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20z' fill='%230f172a' fill-opacity='1' fill-rule='evenodd'/%3E%3C/svg%3E")` }}></div>
+              <div className="fixed inset-0 z-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 20.5V18H0v-2h20v-2H0V8h20V6H0V4h20V2H0V0h22v20h2V0h2v20h2V0h2v20h2V0h2v20h2v2H20v-1.5zM0 20h2v20H0V20zm4 0h2v20H4V20zm4 0h2v20H8V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20z' fill='%230f172a' fill-opacity='1' fill-rule='evenodd'/%3E%3C/svg%3E")` }}></div>
 
               {showAIModal && (
                 <div className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex items-end md:items-center justify-center p-4">
