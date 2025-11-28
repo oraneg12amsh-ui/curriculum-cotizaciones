@@ -3,17 +3,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portafolio Profesional - Genaro Sánchez</title>
     
-    <!-- 1. Tailwind CSS -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- 2. React y ReactDOM -->
+    <!-- React y ReactDOM -->
     <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     
-    <!-- 3. Babel -->
+    <!-- Babel -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
-    <!-- 4. Lucide Icons -->
+    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <style>
@@ -36,7 +36,7 @@
 
         const { useState, useEffect, useRef, useCallback } = React;
         
-        // --- CONFIGURACIÓN REAL (curriculum-cb122) ---
+        // --- CONFIGURACIÓN FIREBASE ---
         const firebaseConfig = {
             apiKey: "AIzaSyAgsBSRUq8_06oieVSHFUiofB7YA7ezwOM",
             authDomain: "curriculum-cb122.firebaseapp.com",
@@ -47,7 +47,7 @@
             measurementId: "G-WP8Y7EKMVP"
         };
 
-        // Inicialización
+        // Inicialización segura
         let app, analytics, auth, db;
         try {
             app = initializeApp(firebaseConfig);
@@ -59,7 +59,6 @@
         }
         
         const appId = 'portfolio-genaro-main'; 
-        // HE PUESTO TU API KEY DE FIREBASE AQUÍ TAMBIÉN PARA INTENTAR ACTIVAR LA IA
         const apiKey = "AIzaSyAgsBSRUq8_06oieVSHFUiofB7YA7ezwOM"; 
 
         // --- ICONOS ---
@@ -84,32 +83,20 @@
             };
         };
 
-        const requiredIcons = [
-            "Save", "Edit2", "Check", "Upload", "Award", "Server", "Shield", "Monitor", "Mail", "Phone", "MapPin", 
-            "ExternalLink", "Menu", "X", "Download", "FileText", "Smartphone", "ShoppingBag", "Coffee", "Plane", 
-            "Scissors", "Stethoscope", "Briefcase", "MessageCircle", "Facebook", "GraduationCap", "Lock", 
-            "LogOut", "Layout", "Loader", "Sparkles", "Bot", "Send", "User", "Calendar", "FileCheck", "Clock", 
-            "ArrowLeft", "ChevronRight", "AlertCircle", "File", "Eye"
-        ];
-
+        // Cargar iconos de forma segura
+        const requiredIcons = ["Save", "Edit2", "Check", "Upload", "Award", "Server", "Shield", "Monitor", "Mail", "Phone", "MapPin", "ExternalLink", "Menu", "X", "Download", "FileText", "Smartphone", "ShoppingBag", "Coffee", "Plane", "Scissors", "Stethoscope", "Briefcase", "MessageCircle", "Facebook", "GraduationCap", "Lock", "LogOut", "Layout", "Loader", "Sparkles", "Bot", "Send", "User", "Calendar", "FileCheck", "Clock", "ArrowLeft", "ChevronRight", "AlertCircle", "File", "Eye"];
         const Icons = requiredIcons.reduce((acc, name) => {
-            acc[name] = createLucideIcon(name, lucide.icons[name]);
+            if (lucide && lucide.icons && lucide.icons[name]) {
+                acc[name] = createLucideIcon(name, lucide.icons[name]);
+            } else {
+                console.warn(`Icono ${name} no encontrado.`);
+                acc[name] = () => null; 
+            }
             return acc;
         }, {});
 
-        const { 
-            Save, Edit2, Check, Upload, Award, Server, Shield, Monitor, Mail, Phone, MapPin, 
-            ExternalLink, Menu, X, Download, FileText, Smartphone, ShoppingBag, Coffee, Plane, 
-            Scissors, Stethoscope, Briefcase, MessageCircle, Facebook, GraduationCap, Lock, 
-            LogOut, Layout, Loader, Sparkles, Bot, Send, User, Calendar, FileCheck, Clock, 
-            ArrowLeft, ChevronRight, AlertCircle, File, Eye 
-        } = Icons;
-
-        const IconMap = { 
-          Shield, Server, Monitor, Award, 
-          Smartphone, ShoppingBag, Coffee, 
-          Plane, Scissors, Stethoscope, Briefcase 
-        };
+        const { Save, Edit2, Check, Upload, Award, Server, Shield, Monitor, Mail, Phone, MapPin, ExternalLink, Menu, X, Download, FileText, Smartphone, ShoppingBag, Coffee, Plane, Scissors, Stethoscope, Briefcase, MessageCircle, Facebook, GraduationCap, Lock, LogOut, Layout, Loader, Sparkles, Bot, Send, User, Calendar, FileCheck, Clock, ArrowLeft, ChevronRight, AlertCircle, File, Eye } = Icons;
+        const IconMap = { Shield, Server, Monitor, Award, Smartphone, ShoppingBag, Coffee, Plane, Scissors, Stethoscope, Briefcase };
 
         // --- PDF LOGIC ---
         const usePdfThumbnail = () => {
@@ -130,21 +117,14 @@
             if (!window.pdfjsLib || !input) return null;
             try {
               let arrayBuffer;
-              // CAMBIO: Verificación más robusta que no depende de instanceof File
               if (typeof input === 'string') {
-                 // Es una cadena (URL o Base64)
                  if (input.includes('application/pdf')) {
                     const res = await fetch(input);
                     arrayBuffer = await res.arrayBuffer();
-                 } else {
-                    return null;
-                 }
+                 } else return null;
               } else if (input && typeof input.arrayBuffer === 'function') {
-                 // Es un objeto File o Blob (tiene método arrayBuffer)
                  arrayBuffer = await input.arrayBuffer();
-              } else {
-                 return null;
-              }
+              } else return null;
 
               const pdf = await window.pdfjsLib.getDocument(arrayBuffer).promise;
               const page = await pdf.getPage(1);
@@ -182,11 +162,9 @@
             
             if (file.type === 'application/pdf') {
                 if (!allowPdf) { alert("Solo imágenes permitidas aquí."); setLoading(false); return; }
-                // CAMBIO: Límite reducido a 750KB para evitar error de Firebase (1MB límite tras conversión base64)
-                if (file.size > 750 * 1024) { 
-                    alert("⚠️ El PDF es demasiado pesado. El límite seguro es 750KB para evitar errores de guardado."); 
-                    setLoading(false); 
-                    return; 
+                if (file.size > 300 * 1024) { 
+                    alert("⚠️ PDF DEMASIADO GRANDE. Límite: 300KB."); 
+                    setLoading(false); return; 
                 }
                 const reader = new FileReader();
                 reader.onload = async (ev) => {
@@ -205,13 +183,13 @@
                   img.onload = () => {
                     const canvas = document.createElement('canvas');
                     let width = img.width; let height = img.height;
-                    const MAX_WIDTH = 1200; const MAX_HEIGHT = 1200;
+                    const MAX_WIDTH = 600; const MAX_HEIGHT = 600;
                     if (width > height) { if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; } } 
                     else { if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; } }
                     canvas.width = width; canvas.height = height;
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, width, height);
-                    onFileUpdate(canvas.toDataURL('image/jpeg', 0.7));
+                    onFileUpdate(canvas.toDataURL('image/jpeg', 0.5));
                     setLoading(false);
                   };
                 };
@@ -251,10 +229,12 @@
         };
 
         function Portfolio() {
-          const [data, setData] = useState(null);
+          // CAMBIO: Iniciar con DEFAULT_DATA para que la página siempre cargue, aunque Firebase falle o tarde.
+          const [data, setData] = useState(DEFAULT_DATA);
           const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
           const [user, setUser] = useState(null);
           const [permissionError, setPermissionError] = useState(false);
+          const [isLocalFile, setIsLocalFile] = useState(false); // Detección de entorno local
           
           const [isAuthenticated, setIsAuthenticated] = useState(false);
           const [isEditing, setIsEditing] = useState(false);
@@ -274,46 +254,52 @@
           const [bookedSlots, setBookedSlots] = useState([]);
           const [isBooking, setIsBooking] = useState(false);
 
-          // 1. AUTENTICACIÓN
+          // VERIFICACIÓN DE PROTOCOLO FILE://
           useEffect(() => {
+              if (window.location.protocol === 'file:') {
+                  setIsLocalFile(true);
+                  //alert("⚠️ AVISO: Estás abriendo el archivo localmente (doble clic).\n\nAlgunas funciones como la base de datos pueden no funcionar por seguridad del navegador.\n\nPara probarlo bien, usa 'Live Server' en VS Code o súbelo a GitHub.");
+              }
+          }, []);
+
+          // 1. AUTENTICACIÓN (Solo si no es archivo local)
+          useEffect(() => {
+            if (isLocalFile) return; 
             const initAuth = async () => {
               try {
                   await signInAnonymously(auth);
               } catch (e) { 
                   console.error("Error de Autenticación:", e);
                   if (e.code === 'auth/configuration-not-found' || e.code === 'auth/operation-not-allowed') {
-                      alert("⚠️ ERROR DE CONFIGURACIÓN FIREBASE:\n\nDebes habilitar 'Anonymous' en: Authentication > Sign-in method");
+                      alert("⚠️ ERROR: Habilita 'Anonymous' en Firebase Auth.");
                   }
               }
             };
-            initAuth();
             if (auth) {
+                initAuth();
                 const unsubscribe = onAuthStateChanged(auth, setUser);
                 return () => unsubscribe();
             }
-          }, []);
+          }, [isLocalFile]);
 
-          // 2. SINCRONIZACIÓN DE DATOS
+          // 2. SINCRONIZACIÓN DE DATOS (Silenciosa)
           useEffect(() => {
-            if (!user || !db) return;
+            if (!user || !db || isLocalFile) return;
             const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'portfolio_content', 'main');
             const unsubscribe = onSnapshot(docRef, (docSnap) => {
-              if (docSnap.exists()) { setData(prev => ({ ...DEFAULT_DATA, ...docSnap.data() })); } 
-              else { setData(DEFAULT_DATA); }
+              if (docSnap.exists()) { 
+                  // Si hay datos en la nube, actualizamos el estado. Si no, nos quedamos con los locales.
+                  setData(prev => ({ ...DEFAULT_DATA, ...docSnap.data() })); 
+              } 
             }, (error) => {
                 console.error("Error fetching data:", error);
-                
-                // DETECCIÓN DE ERROR DE PERMISOS
-                if (error.code === 'permission-denied' || error.message.includes("Missing or insufficient permissions")) {
-                    setPermissionError(true);
-                }
-                
-                setData(DEFAULT_DATA); // Fallback a datos locales
+                if (error.code === 'permission-denied') setPermissionError(true);
             });
             return () => unsubscribe();
-          }, [user]);
+          }, [user, isLocalFile]);
 
-          // 3. RECUPERAR CITAS OCUPADAS
+          // ... (Resto de useEffects y funciones igual que antes) ...
+          // 3. RECUPERAR CITAS
           useEffect(() => {
             if (!user || !selectedDate || !db) return;
             const fetchBookedSlots = async () => {
@@ -328,60 +314,12 @@
             fetchBookedSlots();
           }, [selectedDate, user]);
 
-          // --- PANTALLA DE AYUDA DE REGLAS DE SEGURIDAD ---
-          if (permissionError) {
-              return (
-                  <div className="min-h-screen bg-slate-900 flex items-center justify-center p-6 text-white font-sans">
-                      <div className="max-w-3xl bg-slate-800 p-8 rounded-2xl shadow-2xl border border-red-500/50">
-                          <div className="flex items-center gap-4 mb-6">
-                              <div className="bg-red-500/20 p-3 rounded-full text-red-400"><AlertCircle size={40} /></div>
-                              <h1 className="text-2xl font-bold">Acceso Bloqueado por Reglas de Seguridad</h1>
-                          </div>
-                          <p className="text-slate-300 mb-4 leading-relaxed">
-                              Estás en <strong>Modo Producción</strong>, lo cual es excelente, pero Firebase está bloqueando tu app porque no has definido qué rutas son seguras.
-                          </p>
-                          <p className="text-slate-300 mb-6">
-                              Para arreglarlo, copia este código exacto y pégalo en <strong>Firebase Console &gt; Firestore Database &gt; Reglas</strong>:
-                          </p>
-                          
-                          <div className="bg-black/50 p-4 rounded-xl font-mono text-xs text-green-400 mb-6 overflow-x-auto border border-slate-700 relative group">
-<pre>{`rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    
-    // 1. Permitir lectura/escritura en tu Portafolio
-    match /artifacts/portfolio-genaro-main/public/data/portfolio_content/{document=**} {
-      allow read, write: if true;
-    }
-    
-    // 2. Permitir a clientes crear citas (pero no leer/borrar todo)
-    match /artifacts/portfolio-genaro-main/public/data/appointments/{document=**} {
-      allow read, create: if true;
-    }
-  }
-}`}</pre>
-                              <button onClick={() => {navigator.clipboard.writeText(`rules_version = '2';\nservice cloud.firestore {\n  match /databases/{database}/documents {\n    match /artifacts/portfolio-genaro-main/public/data/portfolio_content/{document=**} {\n      allow read, write: if true;\n    }\n    match /artifacts/portfolio-genaro-main/public/data/appointments/{document=**} {\n      allow read, create: if true;\n    }\n  }\n}`); alert("Reglas copiadas al portapapeles!");}} className="absolute top-4 right-4 bg-slate-700 hover:bg-slate-600 text-white px-3 py-1 rounded text-xs font-bold">Copiar</button>
-                          </div>
-
-                          <div className="flex gap-4">
-                              <a href="https://console.firebase.google.com/project/curriculum-cb122/firestore/rules" target="_blank" className="bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-6 rounded-lg transition-colors flex-1 text-center">
-                                  Ir a la Consola de Firebase
-                              </a>
-                              <button onClick={() => window.location.reload()} className="bg-slate-700 hover:bg-slate-600 text-white font-bold py-3 px-6 rounded-lg transition-colors">
-                                  Ya lo hice, Recargar
-                              </button>
-                          </div>
-                      </div>
-                  </div>
-              );
-          }
-
-          // GUARDAR CAMBIOS
+          // GUARDAR
           const saveDataToCloud = async () => {
+            if (isLocalFile) { alert("No se puede guardar desde un archivo local (file://). Sube la página a GitHub."); return; }
             if (!user || !data) return;
             setIsSaving(true);
             try {
-              // CAMBIO: Sanitización profunda para eliminar 'undefined' anidados que JSON.stringify puede dejar pasar en arrays
               const deepSanitize = (obj) => {
                   if (obj === undefined) return null;
                   if (obj === null || typeof obj !== 'object') return obj;
@@ -389,45 +327,39 @@ service cloud.firestore {
                   const newObj = {};
                   for (const key in obj) {
                       const val = deepSanitize(obj[key]);
-                      if (val !== undefined) newObj[key] = val;
-                      else newObj[key] = null; // Convertir undefined a null explícitamente
+                      newObj[key] = (val !== undefined) ? val : null;
                   }
                   return newObj;
               };
-
               const cleanData = deepSanitize(data);
-              
+              const jsonString = JSON.stringify(cleanData);
+              const bytes = new TextEncoder().encode(jsonString).length;
+              if (bytes > 1000000) {
+                  alert(`⚠️ Archivo muy pesado (${(bytes/1024/1024).toFixed(2)} MB). Límite 1MB. Reduce imágenes/PDFs.`);
+                  setIsSaving(false); return;
+              }
               const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'portfolio_content', 'main');
               await setDoc(docRef, cleanData);
-              setIsSaving(false);
-              setIsEditing(false);
-              alert("¡Cambios guardados exitosamente!");
-            } catch (error) { 
-              console.error("Error guardando:", error); 
-              setIsSaving(false); 
-              alert("Error al guardar: " + (error.code || error.message)); 
-            }
+              setIsSaving(false); setIsEditing(false); alert("¡Guardado!");
+            } catch (error) { console.error(error); setIsSaving(false); alert("Error al guardar: " + error.code); }
           };
 
+          // AUTH & TOOLS
           const confirmBooking = async () => {
             if (!user || !selectedDate || !selectedTime) return;
             setIsBooking(true);
             try {
-              await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'appointments'), {
-                date: selectedDate, time: selectedTime, bookedAt: new Date().toISOString(), status: 'confirmed_via_whatsapp'
-              });
+              await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'appointments'), { date: selectedDate, time: selectedTime, bookedAt: new Date().toISOString(), status: 'confirmed_via_whatsapp' });
               const message = `Hola Genaro, hablé con Yenner.\n\n${aiResponse?.technicalSummary || 'Interés General'}\n\n📅 CITA CONFIRMADA:\nFecha: ${selectedDate}\nHora: ${selectedTime}`;
               window.open(`https://wa.me/52${data.profile.phone.replace(/\s/g, '')}?text=${encodeURIComponent(message)}`, '_blank');
-              setIsBooking(false); setShowAIModal(false); setSelectedDate(""); setSelectedTime("");
-              alert("¡Cita bloqueada! Redirigiendo a WhatsApp...");
+              setIsBooking(false); setShowAIModal(false); setSelectedDate(""); setSelectedTime(""); alert("¡Cita bloqueada! Redirigiendo a WhatsApp...");
             } catch (error) { console.error("Error reservando:", error); setIsBooking(false); alert("Error al reservar."); }
           };
 
           const handleConsultAI = async (e) => {
-            e.preventDefault();
-            if (!aiInput.trim()) return;
+            e.preventDefault(); if (!aiInput.trim()) return;
             setAiLoading(true); setAiResponse(null); setShowScheduler(false);
-            if (!apiKey) { alert("Debes configurar la API Key de Gemini en el código."); setAiLoading(false); return; }
+            if (!apiKey) { alert("Configura API Key."); setAiLoading(false); return; }
             const servicesContext = data.services.map(s => `- ${s.title}: ${s.desc} (Precio: ${s.price})`).join("\n");
             const prompt = `Tu Nombre: Yenner. Rol: Asesor. Servicios: ${servicesContext}. Cliente: "${aiInput}". Formato: [Consejo] RESUMEN_TECNICO: [Resumen]`;
             try {
@@ -440,28 +372,16 @@ service cloud.firestore {
             setAiLoading(false);
           };
 
-          const generateTimeSlots = () => {
-            const slots = []; for (let i = 9; i <= 18; i++) { slots.push(`${i}:00`); if (i < 18) slots.push(`${i}:30`); }
-            return slots;
-          };
-
+          const generateTimeSlots = () => { const slots = []; for (let i = 9; i <= 18; i++) { slots.push(`${i}:00`); if (i < 18) slots.push(`${i}:30`); } return slots; };
           const updateField = (s, f, v) => setData(p => ({ ...p, [s]: { ...p[s], [f]: v } }));
           const updateCert = (id, f, v) => setData(p => ({ ...p, certificates: p.certificates.map(c => c.id === id ? { ...c, [f]: v } : c) }));
           const updateShowcase = (id, i) => setData(p => ({ ...p, serviceShowcase: p.serviceShowcase.map(s => s.id === id ? { ...s, image: i } : s) }));
           
           const handleLogin = (e) => {
             e.preventDefault();
-            // --- CAMBIA AQUÍ TU USUARIO Y CONTRASEÑA ---
-            const MI_USUARIO = "genaro"; 
-            const MI_CONTRASEÑA = "sanchez2025"; 
-
-            if (loginUser === MI_USUARIO && loginPass === MI_CONTRASEÑA) { 
-                setIsAuthenticated(true); 
-                setIsEditing(true); 
-                setShowLoginModal(false); 
-            } else {
-                setLoginError("Credenciales incorrectas");
-            }
+            const MI_USUARIO = "genaro"; const MI_CONTRASEÑA = "sanchez2025"; 
+            if (loginUser === MI_USUARIO && loginPass === MI_CONTRASEÑA) { setIsAuthenticated(true); setIsEditing(true); setShowLoginModal(false); } 
+            else setLoginError("Credenciales incorrectas");
           };
 
           const openFileViewer = (fileUrl) => {
@@ -476,20 +396,15 @@ service cloud.firestore {
               {data.serviceShowcase.map((item) => (
                 <div key={item.id} className="aspect-square bg-slate-800 rounded-lg overflow-hidden border border-slate-700 relative group">
                     {isEditing ? (
-                      <div className="absolute inset-0 z-10">
-                        <FileUploader currentFile={item.image} onFileUpdate={(img) => updateShowcase(item.id, img)} label={item.label} aspectClass="h-full w-full" />
-                      </div>
+                      <div className="absolute inset-0 z-10"><FileUploader currentFile={item.image} onFileUpdate={(img) => updateShowcase(item.id, img)} label={item.label} aspectClass="h-full w-full" /></div>
                     ) : (
                       item.image ? (
                         <div className="w-full h-full relative cursor-pointer" onClick={() => openFileViewer(item.image)}>
                             <div className="absolute inset-0 bg-cover bg-center blur-md opacity-60 scale-125" style={{ backgroundImage: `url(${item.image})` }}></div>
                             <img src={item.image} alt={item.label} className="w-full h-full object-contain p-1 relative z-10" />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent flex items-end p-2 pointer-events-none z-20">
-                              <span className="text-[9px] text-white font-bold leading-tight">{item.label}</span>
-                            </div>
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent flex items-end p-2 pointer-events-none z-20"><span className="text-[9px] text-white font-bold leading-tight">{item.label}</span></div>
                             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center z-30 backdrop-blur-[2px]">
                                 <div className="bg-white/20 p-2 rounded-full backdrop-blur-md border border-white/30 text-white transform group-hover:scale-110 transition-transform"><Eye size={24} /></div>
-                                <span className="absolute bottom-1/4 text-white text-[10px] font-bold bg-black/50 px-2 py-1 rounded">Ver imagen</span>
                             </div>
                         </div>
                       ) : (<div className="w-full h-full flex flex-col items-center justify-center text-slate-600 p-2 text-center bg-slate-800"><Layout size={16} className="mb-1 opacity-50" /><span className="text-[8px] font-bold uppercase">{item.label}</span></div>)
@@ -499,21 +414,31 @@ service cloud.firestore {
             </div>
           );
 
-          if (!data) return <div className="min-h-screen flex items-center justify-center bg-slate-50 text-slate-500 font-medium"><Loader className="animate-spin mr-2"/> Cargando Portafolio...</div>;
+          // PANTALLAS DE AVISO (Local / Permisos)
+          if (isLocalFile) return (
+             <div className="min-h-screen bg-slate-900 flex items-center justify-center p-6 text-white text-center font-sans">
+                <div className="max-w-md">
+                    <h1 className="text-3xl font-bold mb-4">⚠️ Modo Archivo Local</h1>
+                    <p className="mb-6">Estás abriendo el archivo con doble clic (file://).<br/>Por seguridad, el navegador bloquea la base de datos.</p>
+                    <p className="text-sm text-slate-400">Sube este archivo a <strong>GitHub Pages</strong> o usa un servidor local para que funcione al 100%.</p>
+                </div>
+             </div>
+          );
+
+          if (permissionError) return (
+             <div className="min-h-screen bg-slate-900 flex items-center justify-center p-6 text-white font-sans"><div className="max-w-xl bg-slate-800 p-8 rounded-2xl shadow-2xl border border-red-500/50"><h1 className="text-2xl font-bold mb-4 text-red-400">Acceso Bloqueado</h1><p>Necesitas pegar las reglas de seguridad en Firebase Console (ver chat).</p></div></div>
+          );
 
           return (
             <div className="min-h-screen bg-slate-50 text-slate-800 font-sans selection:bg-blue-200">
-              <div className="fixed inset-0 z-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 20.5V18H0v-2h20v-2H0V8h20V6H0V4h20V2H0V0h22v20h2V0h2v20h2V0h2v20h2V0h2v20h2v2H20v-1.5zM0 20h2v20H0V20zm4 0h2v20H4V20zm4 0h2v20H8V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20z' fill='%230f172a' fill-opacity='1' fill-rule='evenodd'/%3E%3C/svg%3E")` }}></div>
+              <div className="fixed inset-0 z-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 20.5V18H0v-2h20v-2H0V8h20V6H0V4h20V2H0V0h22v20h2V0h2v20h2V0h2v20h2V0h2v20h2v2H20v-1.5zM0 20h2v20H0V20zm4 0h2v20H4V20zm4 0h2v20H8V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20z' fill='%230f172a' fill-opacity='1' fill-rule='evenodd'/%3E%3C/svg%3E")` }}></div>
 
               {showAIModal && (
                 <div className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex items-end md:items-center justify-center p-4">
                   <div className="bg-white rounded-t-2xl md:rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden animate-fade-in-up flex flex-col max-h-[90vh]">
                     <div className="bg-gradient-to-r from-indigo-900 to-blue-900 p-6 flex justify-between items-start text-white relative overflow-hidden">
                       <div className="absolute top-0 right-0 p-4 opacity-10"><Bot size={120} /></div>
-                      <div className="flex gap-4 relative z-10">
-                        <div className="bg-white/10 p-3 rounded-full backdrop-blur-md border border-white/20"><div className="relative"><Bot className="text-blue-200" size={32} /><GraduationCap className="absolute -top-2 -right-2 text-yellow-400" size={20} /></div></div>
-                        <div><h3 className="font-bold text-xl">Yenner</h3><p className="text-blue-200 text-xs font-medium">Asesor Académico y Digital</p></div>
-                      </div>
+                      <div className="flex gap-4 relative z-10"><div className="bg-white/10 p-3 rounded-full backdrop-blur-md border border-white/20"><div className="relative"><Bot className="text-blue-200" size={32} /><GraduationCap className="absolute -top-2 -right-2 text-yellow-400" size={20} /></div></div><div><h3 className="font-bold text-xl">Yenner</h3><p className="text-blue-200 text-xs font-medium">Asesor Académico y Digital</p></div></div>
                       <button onClick={() => setShowAIModal(false)} className="text-blue-200 hover:text-white z-10"><X size={24}/></button>
                     </div>
                     <div className="p-6 overflow-y-auto bg-slate-50/50">
@@ -567,9 +492,8 @@ service cloud.firestore {
                             {data.certificates.slice(0, 3).map((cert) => (
                               <div key={cert.id} className="bg-slate-800 rounded-xl overflow-hidden border border-slate-700 shadow-lg group">
                                  <div className={`aspect-video bg-slate-900 relative ${cert.image && cert.image.includes('application/pdf') ? '' : ''}`}>
-                                    {isEditing ? (<FileUploader currentFile={cert.image} onFileUpdate={(img) => updateCert(cert.id, 'image', img)} label="Subir" aspectClass="h-full w-full" allowPdf={true} />) 
-                                        : (cert.image ? (cert.image.includes('application/pdf') ? (<div className="w-full h-full relative cursor-pointer group" onClick={() => openFileViewer(cert.image)}><FileUploader currentFile={cert.image} onFileUpdate={()=>{}} label="" aspectClass="h-full w-full" allowPdf={true} /><div className="absolute bottom-2 right-2 bg-black/60 text-white text-[9px] px-2 py-1 rounded font-bold backdrop-blur-md flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-30"><ExternalLink size={10} /> PDF</div><div className="absolute inset-0 z-40"></div></div>) : (<><div className="absolute inset-0 bg-cover bg-center blur-md opacity-60 scale-125" style={{ backgroundImage: `url(${cert.image})` }}></div><img src={cert.image} alt={cert.title} className="w-full h-full object-contain p-1 relative z-10" /></>)) : <div className="w-full h-full flex items-center justify-center text-slate-600"><FileText size={32}/></div>)
-                                    }
+                                    {isEditing ? (<div className="absolute inset-0 z-20 bg-white/50 p-2"><FileUploader currentFile={cert.image} onFileUpdate={(img) => updateCert(cert.id, 'image', img)} label="Subir" aspectClass="h-full w-full" allowPdf={true} /></div>) : 
+                                    (cert.image ? (cert.image.includes('application/pdf') ? (<div className="w-full h-full relative cursor-pointer group" onClick={() => openFileViewer(cert.image)}><FileUploader currentFile={cert.image} onFileUpdate={()=>{}} label="" aspectClass="h-full w-full" allowPdf={true} /><div className="absolute bottom-2 right-2 bg-black/60 text-white text-[9px] px-2 py-1 rounded font-bold backdrop-blur-md flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-30"><ExternalLink size={10} /> PDF</div><div className="absolute inset-0 z-40"></div></div>) : (<><div className="absolute inset-0 bg-cover bg-center blur-md opacity-60 scale-125" style={{ backgroundImage: `url(${cert.image})` }}></div><img src={cert.image} alt={cert.title} className="w-full h-full object-contain p-1 relative z-10" /></>)) : <div className="text-center opacity-30 group-hover:opacity-60 transition-opacity"><Award size={32} className="mx-auto mb-1 text-slate-400" /></div>)}
                                  </div>
                                  <div className="p-3"><h4 className="text-xs font-bold text-white leading-tight mb-1">{cert.title}</h4><p className="text-[10px] text-slate-400">{cert.issuer}</p></div>
                               </div>
