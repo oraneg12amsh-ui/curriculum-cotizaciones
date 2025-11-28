@@ -81,8 +81,7 @@
             });
         };
 
-        // NOTA: Eliminamos Trash2 de aquí y usamos un SVG directo para asegurar que se vea siempre
-        const requiredIcons = ["Save", "Edit2", "Check", "Upload", "Award", "Server", "Shield", "Monitor", "Mail", "Phone", "MapPin", "ExternalLink", "Menu", "X", "Download", "FileText", "Smartphone", "ShoppingBag", "Coffee", "Plane", "Scissors", "Stethoscope", "Briefcase", "MessageCircle", "Facebook", "GraduationCap", "Lock", "LogOut", "Layout", "Loader", "Sparkles", "Bot", "Send", "User", "Calendar", "FileCheck", "ArrowLeft", "AlertCircle", "File", "Eye"];
+        const requiredIcons = ["Save", "Edit2", "Check", "Upload", "Award", "Server", "Shield", "Monitor", "Mail", "Phone", "MapPin", "ExternalLink", "Menu", "X", "Download", "FileText", "Smartphone", "ShoppingBag", "Coffee", "Plane", "Scissors", "Stethoscope", "Briefcase", "MessageCircle", "Facebook", "GraduationCap", "Lock", "LogOut", "Layout", "Loader", "Sparkles", "Bot", "Send", "User", "Calendar", "FileCheck", "ArrowLeft", "AlertCircle", "File", "Eye", "Database", "Trash2"];
         
         const Icons = requiredIcons.reduce((acc, name) => {
             if (lucide && lucide.icons && lucide.icons[name]) {
@@ -93,7 +92,7 @@
             return acc;
         }, {});
 
-        const { Save, Edit2, Check, Upload, Award, Server, Shield, Monitor, Mail, Phone, MapPin, ExternalLink, Menu, X, Download, FileText, Smartphone, ShoppingBag, Coffee, Plane, Scissors, Stethoscope, Briefcase, MessageCircle, Facebook, GraduationCap, Lock, LogOut, Layout, Loader, Sparkles, Bot, Send, User, Calendar, FileCheck, ArrowLeft, AlertCircle, File, Eye } = Icons;
+        const { Save, Edit2, Check, Upload, Award, Server, Shield, Monitor, Mail, Phone, MapPin, ExternalLink, Menu, X, Download, FileText, Smartphone, ShoppingBag, Coffee, Plane, Scissors, Stethoscope, Briefcase, MessageCircle, Facebook, GraduationCap, Lock, LogOut, Layout, Loader, Sparkles, Bot, Send, User, Calendar, FileCheck, ArrowLeft, AlertCircle, File, Eye, Database, Trash2 } = Icons;
         const IconMap = { Shield, Server, Monitor, Award, Smartphone, ShoppingBag, Coffee, Plane, Scissors, Stethoscope, Briefcase };
 
         // --- PDF LOGIC ---
@@ -209,7 +208,7 @@
                         <span className="text-white text-xs font-medium ml-2">Cambiar</span>
                     </div>
 
-                    {/* BOTÓN DE BORRAR (SVG DIRECTO PARA QUE SIEMPRE SE VEA) */}
+                    {/* BOTÓN DE BORRAR */}
                     <button 
                         onClick={(e) => { 
                             e.stopPropagation(); 
@@ -423,25 +422,44 @@
             const servicesContext = data.services.map(s => `- ${s.title}: ${s.desc} (Precio: ${s.price})`).join("\n");
             const prompt = `Tu Nombre: Yenner. Rol: Asesor. Servicios: ${servicesContext}. Cliente: "${aiInput}". Formato: [Consejo] RESUMEN_TECNICO: [Resumen]`;
             try {
+              // CAMBIO: Uso de gemini-1.5-flash en lugar de 2.5 preview
               const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, { 
                   method: "POST", 
                   headers: { "Content-Type": "application/json" }, 
                   body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }) 
               });
               
+              const result = await response.json(); // Primero parsear JSON
+
               if (!response.ok) {
-                 const errorData = await response.json();
-                 console.error("Error de IA:", errorData);
-                 throw new Error(errorData.error?.message || "Error en la respuesta de la API");
+                 // Verificar error especifico de API no habilitada
+                 if (result.error && result.error.message && result.error.message.includes("Generative Language API has not been used")) {
+                     throw new Error("API_DISABLED");
+                 }
+                 // Verificar error específico de key bloqueada
+                 if (result.error && result.error.details && result.error.details[0] && result.error.details[0].reason === "API_KEY_SERVICE_BLOCKED") {
+                     throw new Error("API_KEY_BLOCKED");
+                 }
+                 throw new Error(result.error?.message || "Error en la API");
               }
 
-              const result = await response.json();
               const text = result.candidates?.[0]?.content?.parts?.[0]?.text;
               if (text) { const parts = text.split("RESUMEN_TECNICO:"); setAiResponse({ advice: parts[0].trim(), technicalSummary: parts[1] ? parts[1].trim() : `Cliente interesado en: ${aiInput}.` }); } 
               else { setAiResponse({ advice: "Intenta ser más específico.", technicalSummary: "" }); }
             } catch (error) { 
                 console.error(error);
-                setAiResponse({ advice: `Error al conectar con Yenner: ${error.message}. Asegúrate de que la API Key tenga acceso a Generative Language API.`, technicalSummary: "" }); 
+                let adviceMsg = `Error con Yenner: ${error.message}`;
+                let techMsg = "";
+
+                if (error.message === "API_DISABLED") {
+                    adviceMsg = "⚠️ ERROR: API NO HABILITADA";
+                    techMsg = "Ve a Google Cloud Console > APIs y habilita 'Generative Language API' para tu proyecto.";
+                } else if (error.message === "API_KEY_BLOCKED") {
+                    adviceMsg = "🔒 ERROR: LLAVE BLOQUEADA";
+                    techMsg = "Tu API Key tiene restricciones.\n\nSOLUCIÓN:\n1. Ve a Google Cloud Console > Credenciales.\n2. Edita tu API Key.\n3. En 'Restricciones de API', selecciona 'Generative Language API' para permitirla.";
+                }
+
+                setAiResponse({ advice: adviceMsg, technicalSummary: techMsg }); 
             }
             setAiLoading(false);
           };
@@ -469,7 +487,7 @@
 
           return (
             <div className="min-h-screen bg-slate-50 text-slate-800 font-sans selection:bg-blue-200">
-              <div className="fixed inset-0 z-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 20.5V18H0v-2h20v-2H0V8h20V6H0V4h20V2H0V0h22v20h2V0h2v20h2V0h2v20h2v2H20v-1.5zM0 20h2v20H0V20zm4 0h2v20H4V20zm4 0h2v20H8V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20z' fill='%230f172a' fill-opacity='1' fill-rule='evenodd'/%3E%3C/svg%3E")` }}></div>
+              <div className="fixed inset-0 z-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 20.5V18H0v-2h20v-2H0V8h20V6H0V4h20V2H0V0h22v20h2V0h2v20h2V0h2v20h2V0h2v20h2v2H20v-1.5zM0 20h2v20H0V20zm4 0h2v20H4V20zm4 0h2v20H8V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20z' fill='%230f172a' fill-opacity='1' fill-rule='evenodd'/%3E%3C/svg%3E")` }}></div>
 
               {showAIModal && (
                 <div className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex items-end md:items-center justify-center p-4">
