@@ -20,6 +20,14 @@
         .animate-pulse-custom {
             animation: pulse-soft 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         }
+        /* Custom scrollbar for tables on mobile */
+        .table-container::-webkit-scrollbar {
+            height: 6px;
+        }
+        .table-container::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 3px;
+        }
     </style>
 </head>
 <body class="bg-slate-100 font-sans text-slate-900">
@@ -31,28 +39,29 @@
         const App = () => {
             const WHATSAPP_NUMBER = "522452070033"; 
             const PHONE_NUMBER = "2456903920";
-            const CLIENT_NAME = "Dra. Brenda Mejia";
-            const CLIENT_ID = "Consultorio Odontológico";
+            const CLIENT_NAME = "Cliente Residencial - Perote";
+            const CLIENT_ID = "Monitoreo Remoto Foráneo";
             const APP_URL = "https://oraneg12amsh-ui.github.io/curriculum-cotizaciones/";
 
-            // Precios con margen de $1,500 MXN e Imágenes representativas añadidas
+            // Paquetes actualizados - El Paquete 1 modificado para patrullaje y alarma
             const packages = [
                 {
                     id: 1,
-                    name: "Paquete Esencial Wi-Fi",
-                    subtitle: "3 Cámaras 360°",
-                    price: "2,690.00",
-                    icon: "eye",
-                    image: "https://images.unsplash.com/photo-1557568702-2cb15f79590e?auto=format&fit=crop&w=500&q=80",
+                    name: "Paquete Inteligente 360° (Recomendado)",
+                    subtitle: "3 Cámaras PTZ + Alarma",
+                    price: "3,650.00",
+                    icon: "shield-alert",
+                    image: "https://images.unsplash.com/photo-1541888086925-eb4cc7867258?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
                     features: [
-                        "3 Cámaras robóticas con movimiento",
-                        "Control total desde tu celular",
-                        "Audio bidireccional (habla/escucha)",
-                        "Sin cables de video estorbosos",
-                        "Ideal para monitoreo rápido"
+                        "Patrullaje 360° en diferentes ángulos",
+                        "Detección de movimiento con alertas al celular",
+                        "Alarma disuasiva (Sonido/Luz) integrada",
+                        "Grabación 24/7 (Memorias MicroSD incluidas)",
+                        "Audio bidireccional (habla/escucha)"
                     ],
-                    note: "Solo monitoreo en vivo (no incluye memorias).",
-                    color: "text-blue-600"
+                    note: "El sistema IDEAL para cuidar casas desde otra ciudad. Máxima tranquilidad.",
+                    color: "text-blue-600",
+                    featured: true
                 },
                 {
                     id: 2,
@@ -60,7 +69,7 @@
                     subtitle: "4 Cámaras Fijas",
                     price: "3,150.00",
                     icon: "camera",
-                    image: "https://images.unsplash.com/photo-1558002038-1055907df827?auto=format&fit=crop&w=500&q=80",
+                    image: "https://images.unsplash.com/photo-1549109926-58f039549485?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
                     features: [
                         "4 Cámaras Full HD de alta resolución",
                         "Cobertura de 4 puntos estratégicos",
@@ -68,8 +77,9 @@
                         "Visualización remota por celular",
                         "Visión nocturna automática"
                     ],
-                    note: "Monitoreo en vivo (no incluye disco duro).",
-                    color: "text-slate-600"
+                    note: "Monitoreo en vivo, cámaras sin movimiento.",
+                    color: "text-slate-600",
+                    featured: false
                 },
                 {
                     id: 3,
@@ -77,16 +87,17 @@
                     subtitle: "2 Cámaras + Grabación",
                     price: "3,490.00",
                     icon: "hard-drive",
-                    image: "https://images.unsplash.com/photo-1548611716-1707921a2eb3?auto=format&fit=crop&w=500&q=80",
+                    image: "https://images.unsplash.com/photo-1557568702-2cb15f79590e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
                     features: [
                         "Marca líder mundial (HiLook by Hikvision)",
-                        "2 Cámaras de alta definición",
+                        "2 Cámaras de alta definición fijas",
                         "Disco Duro de 500GB incluido",
                         "Grabación automática 24/7",
                         "Respaldo de video por varios días"
                     ],
-                    note: "Calidad y respaldo garantizado.",
-                    color: "text-indigo-600"
+                    note: "Sistema robusto de marca líder (sin patrullaje).",
+                    color: "text-indigo-600",
+                    featured: false
                 },
                 {
                     id: 4,
@@ -94,17 +105,17 @@
                     subtitle: "4 Cámaras + Grabación",
                     price: "4,150.00",
                     icon: "shield-check",
-                    image: "https://images.unsplash.com/photo-1549109926-58f039549485?auto=format&fit=crop&w=500&q=80",
+                    image: "https://images.unsplash.com/photo-1584432810601-6c7f27d2362b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
                     features: [
-                        "El sistema más equilibrado y vendido",
+                        "El sistema más equilibrado",
                         "4 Cámaras HiLook profesionales",
                         "Disco Duro de 500GB para respaldo",
                         "Durabilidad de grado industrial",
                         "Alertas de movimiento al celular"
                     ],
-                    note: "Ideal para comercios y hogares exigentes.",
+                    note: "Ideal para perímetros grandes. Cámaras fijas.",
                     color: "text-emerald-600",
-                    featured: true
+                    featured: false
                 },
                 {
                     id: 5,
@@ -112,7 +123,7 @@
                     subtitle: "Máxima Resolución",
                     price: "5,490.00",
                     icon: "check-circle",
-                    image: "https://images.unsplash.com/photo-1584432810601-6c7f27d2362b?auto=format&fit=crop&w=500&q=80",
+                    image: "https://images.unsplash.com/photo-1528312635006-8ea0bc49ecaa?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
                     features: [
                         "Cámaras de 4 Megapíxeles (Ultra HD)",
                         "El doble de claridad que una cámara estándar",
@@ -120,8 +131,9 @@
                         "Identificación clara de rostros y placas",
                         "Máximo almacenamiento y calidad"
                     ],
-                    note: "La mejor tecnología disponible en el mercado.",
-                    color: "text-amber-600"
+                    note: "Máxima calidad de imagen (sin patrullaje 360°).",
+                    color: "text-amber-600",
+                    featured: false
                 }
             ];
 
@@ -132,7 +144,7 @@
             });
 
             const handleContact = (pkgName) => {
-                const text = `Hola Genaro, soy la Dra. Brenda Mejia. He revisado la cotización en el enlace y me interesa el ${pkgName}. ¿Podemos agendar?`;
+                const text = `Hola Genaro. He revisado la cotización y me interesa el ${pkgName} para instalar en Perote. ¿Podemos agendar?`;
                 window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`, '_blank');
             };
 
@@ -141,14 +153,14 @@
                     {/* Banner de Expiración */}
                     <div className="bg-red-600 text-white py-2 px-4 text-center text-[10px] md:text-xs font-bold flex items-center justify-center gap-2 animate-pulse-custom sticky top-0 z-50 shadow-md">
                         <i data-lucide="alert-triangle" className="w-4 h-4"></i>
-                        ESTA COTIZACIÓN PARA LA {CLIENT_NAME.toUpperCase()} EXPIRA EN 5 DÍAS.
+                        ESTA COTIZACIÓN PARA PEROTE EXPIRA EN 5 DÍAS.
                     </div>
 
                     {/* Header */}
-                    <header className="bg-slate-900 text-white py-12 px-6 text-center shadow-lg">
-                        <div className="max-w-4xl mx-auto">
+                    <header className="bg-slate-900 text-white py-12 px-6 text-center shadow-lg relative overflow-hidden">
+                        <div className="max-w-4xl mx-auto relative z-10">
                             <div className="inline-block bg-blue-500/20 text-blue-400 text-[10px] px-4 py-1 rounded-full font-bold tracking-widest uppercase mb-4 border border-blue-500/30">
-                                Propuesta Técnica Personalizada
+                                Propuesta Técnica de Seguridad Foránea
                             </div>
                             <h1 className="text-3xl font-bold mb-2 tracking-tight uppercase text-blue-50">GUARDIAN CLIMÁTICO</h1>
                             <p className="text-blue-400 font-medium mb-4 uppercase tracking-widest text-sm italic">Téc. en Informática · Seguridad y Vigilancia</p>
@@ -159,24 +171,24 @@
                                 <h2 className="text-2xl font-bold text-white mb-1">{CLIENT_NAME}</h2>
                                 <p className="text-blue-400 text-sm font-mono tracking-widest">{CLIENT_ID}</p>
                                 <div className="mt-4 pt-4 border-t border-white/10">
-                                    <p className="text-[10px] text-slate-500 italic leading-snug">
-                                        "Por favor, revise las opciones a continuación y presione el botón del paquete deseado para iniciar el proceso."
+                                    <p className="text-[10px] text-slate-300 leading-snug">
+                                        "Sistema diseñado especialmente para monitorear su propiedad a distancia con total tranquilidad."
                                     </p>
                                 </div>
                             </div>
                         </div>
                     </header>
 
-                    <main className="max-w-5xl mx-auto px-4 -mt-8">
+                    <main className="max-w-5xl mx-auto px-4 -mt-8 relative z-20">
                         {/* Quick Actions Card */}
                         <div className="bg-white rounded-xl shadow-md p-6 mb-8 flex flex-wrap justify-center gap-6 text-sm text-slate-600 border border-slate-200">
                             <div className="flex items-center gap-2">
-                                <i data-lucide="user-check" className="w-4 h-4 text-blue-500"></i>
-                                <span className="font-semibold text-slate-800">Téc. Genaro Sánchez Bravo</span>
+                                <i data-lucide="map-pin" className="w-4 h-4 text-blue-500"></i>
+                                <span className="font-semibold text-slate-800">Servicio Cd. Serdán - Perote</span>
                             </div>
                             <div className="flex items-center gap-2 md:border-l md:border-slate-200 md:pl-6">
-                                <i data-lucide="file-text" className="w-4 h-4 text-blue-500"></i>
-                                <span className="font-medium">Cotización Exclusiva</span>
+                                <i data-lucide="shield-alert" className="w-4 h-4 text-emerald-500"></i>
+                                <span className="font-medium text-emerald-700">Tranquilidad Total</span>
                             </div>
                             <div className="flex items-center gap-2 md:border-l md:border-slate-200 md:pl-6">
                                 <i data-lucide="clock" className="w-4 h-4 text-red-500"></i>
@@ -184,16 +196,84 @@
                             </div>
                         </div>
 
+                        {/* TARJETA DE VIÁTICOS FORÁNEOS DETALLADA */}
+                        <div className="bg-amber-50 border-2 border-amber-200 rounded-2xl p-6 mb-10 shadow-sm flex flex-col md:flex-row justify-between gap-8">
+                            <div className="flex-1">
+                                <div className="flex items-center gap-3 mb-4">
+                                    <div className="bg-amber-100 p-2.5 rounded-full shrink-0">
+                                        <i data-lucide="car" className="w-5 h-5 text-amber-600"></i>
+                                    </div>
+                                    <h3 className="font-bold text-slate-800 text-lg">Costo de Viáticos e Instalación Foránea</h3>
+                                </div>
+                                <p className="text-sm text-slate-600 mb-4">
+                                    Traslado de equipo técnico desde Ciudad Serdán, Pue. hasta Perote, Ver. (Ruta 140D, 276 km viaje redondo). <strong>El costo cubre estrictamente la operación, es 100% transparente y se comprueba mediante tickets físicos.</strong>
+                                </p>
+                                
+                                <ul className="space-y-2 text-sm text-slate-700 mb-4 bg-white p-4 rounded-xl border border-amber-100">
+                                    <li className="flex justify-between border-b border-slate-100 pb-2">
+                                        <span className="flex items-center gap-2"><i data-lucide="fuel" className="w-4 h-4 text-slate-400"></i> Gasolina (Aprox. 25 Litros a $24/L)</span>
+                                        <span className="font-semibold">~$600.00</span>
+                                    </li>
+                                    <li className="flex justify-between border-b border-slate-100 py-2">
+                                        <span className="flex items-center gap-2"><i data-lucide="ticket" className="w-4 h-4 text-slate-400"></i> Peajes (4 Casetas Amozoc-Perote Ida/Vuelta)</span>
+                                        <span className="font-semibold">~$450.00</span>
+                                    </li>
+                                    <li className="flex justify-between pt-2">
+                                        <span className="flex items-center gap-2"><i data-lucide="briefcase" className="w-4 h-4 text-slate-400"></i> Jornada Técnica Foránea</span>
+                                        <span className="font-semibold">$800.00</span>
+                                    </li>
+                                </ul>
+                                <p className="text-[11px] text-slate-500 italic leading-snug">
+                                    * La "Jornada Técnica" justifica más de 4.5 horas de manejo, desgaste vehicular, alimentos y la especialización en redes e informática requerida para configurar un sistema seguro en una red externa.
+                                </p>
+                            </div>
+                            
+                            <div className="flex flex-col items-center justify-center shrink-0 bg-white px-8 py-6 rounded-xl border border-amber-200 shadow-sm min-w-[200px]">
+                                <span className="block text-xs text-amber-600 font-bold uppercase tracking-wider mb-2">Inversión Logística</span>
+                                <span className="text-4xl font-black text-slate-800 tracking-tighter mb-1">$1,850</span>
+                                <span className="text-sm font-semibold text-slate-500 block mb-4">.00 MXN</span>
+                                <div className="bg-emerald-50 text-emerald-700 text-[10px] font-bold px-3 py-1.5 rounded-full uppercase flex items-center gap-1 border border-emerald-200">
+                                    <i data-lucide="check-circle" className="w-3 h-3"></i> Tickets Comprobables
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* NUEVO: ESQUEMA DE PAGOS */}
+                        <div className="bg-blue-50 border-2 border-blue-200 rounded-2xl p-6 mb-10 shadow-sm">
+                            <h3 className="font-bold text-slate-800 text-lg mb-4 flex items-center gap-2">
+                                <i data-lucide="wallet" className="w-6 h-6 text-blue-600"></i>
+                                Esquema de Pagos y Contratación Foránea
+                            </h3>
+                            <p className="text-sm text-slate-600 mb-4">Para agendar la visita e instalación a la ciudad de Perote, manejamos el siguiente esquema que le otorga facilidades de pago para sus cámaras:</p>
+                            
+                            <div className="grid md:grid-cols-2 gap-4">
+                                <div className="bg-white p-5 rounded-xl border border-blue-100 shadow-sm">
+                                    <span className="text-xs font-bold text-blue-600 uppercase tracking-wider block mb-3 border-b border-blue-50 pb-2">1. Pago Inicial (Para Agendar)</span>
+                                    <ul className="space-y-3 text-sm text-slate-700 font-medium">
+                                        <li className="flex items-center gap-2"><i data-lucide="check-circle-2" className="w-5 h-5 text-blue-500"></i> 100% del costo de Viáticos ($1,850.00)</li>
+                                        <li className="flex items-center gap-2"><i data-lucide="check-circle-2" className="w-5 h-5 text-blue-500"></i> 40% del costo del paquete de cámaras</li>
+                                    </ul>
+                                </div>
+                                <div className="bg-white p-5 rounded-xl border border-blue-100 shadow-sm">
+                                    <span className="text-xs font-bold text-emerald-600 uppercase tracking-wider block mb-3 border-b border-blue-50 pb-2">2. Liquidación Financiada</span>
+                                    <ul className="space-y-3 text-sm text-slate-700 font-medium">
+                                        <li className="flex items-center gap-2"><i data-lucide="calendar" className="w-5 h-5 text-emerald-500"></i> 1er Pago Quincenal (30% del equipo)</li>
+                                        <li className="flex items-center gap-2"><i data-lucide="calendar" className="w-5 h-5 text-emerald-500"></i> 2do Pago Quincenal (30% del equipo)</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
                         {/* Package Grid */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
                             {packages.map((pkg) => (
                                 <div 
                                     key={pkg.id} 
-                                    className={`relative rounded-2xl border-2 transition-all duration-300 shadow-sm hover:shadow-xl flex flex-col h-full bg-white overflow-hidden ${pkg.featured ? 'border-blue-500 ring-2 ring-blue-100 scale-105 z-10' : 'border-slate-200'}`}
+                                    className={`relative rounded-2xl border-2 transition-all duration-300 shadow-sm hover:shadow-xl flex flex-col h-full bg-white overflow-hidden ${pkg.featured ? 'border-blue-500 ring-4 ring-blue-100 scale-105 z-10' : 'border-slate-200'}`}
                                 >
                                     {pkg.featured && (
-                                        <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-blue-600 text-white px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-lg z-20 border border-blue-400">
-                                            Recomendado
+                                        <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-blue-600 text-white px-6 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-lg z-20 border border-blue-400 w-max">
+                                            IDEAL PARA SU CASA
                                         </div>
                                     )}
                                     
@@ -204,7 +284,7 @@
                                             alt={pkg.name} 
                                             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                                         />
-                                        <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent"></div>
+                                        <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/20 to-transparent"></div>
                                         <div className="absolute bottom-3 left-3 bg-white/95 backdrop-blur-sm p-2.5 rounded-xl shadow-lg">
                                             <i data-lucide={pkg.icon} className={`w-6 h-6 ${pkg.color}`}></i>
                                         </div>
@@ -213,8 +293,9 @@
                                     {/* Contenido de la Tarjeta */}
                                     <div className="p-6 flex flex-col flex-grow">
                                         <div className="text-right mb-4">
-                                            <span className="text-xs text-slate-400 font-bold uppercase block mb-1 text-[10px]">Inversión Total</span>
+                                            <span className="text-xs text-slate-400 font-bold uppercase block mb-1 text-[10px]">Costo de los Equipos</span>
                                             <span className="text-2xl font-black text-slate-800 tracking-tighter">${pkg.price}</span>
+                                            <span className="text-[9px] text-slate-400 block mt-1">+ Viáticos ($1,850)</span>
                                         </div>
 
                                         <h3 className="text-xl font-bold text-slate-800 leading-tight mb-1">{pkg.name}</h3>
@@ -229,8 +310,8 @@
                                             ))}
                                         </ul>
 
-                                        <div className="bg-slate-50 p-3 rounded-lg border border-slate-100 mb-6">
-                                            <p className="text-xs text-slate-500 italic leading-snug">
+                                        <div className={`p-3 rounded-lg border mb-6 ${pkg.featured ? 'bg-blue-50 border-blue-200' : 'bg-slate-50 border-slate-100'}`}>
+                                            <p className={`text-xs italic leading-snug ${pkg.featured ? 'text-blue-800 font-medium' : 'text-slate-500'}`}>
                                                 <strong>Nota:</strong> {pkg.note}
                                             </p>
                                         </div>
@@ -251,90 +332,155 @@
                             ))}
                         </div>
 
-                        {/* NUEVO: Plataforma de Citas (Upsell Marketing) */}
-                        <section className="mt-16 bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 rounded-[30px] p-1 shadow-2xl overflow-hidden relative group">
-                            <div className="bg-slate-900/80 backdrop-blur-sm rounded-[26px] p-8 md:p-10 relative z-10 border border-white/10">
-                                <div className="absolute -top-6 -right-6 text-blue-500/10 transform rotate-12 group-hover:rotate-6 transition-transform duration-500 pointer-events-none">
-                                    <i data-lucide="calendar-clock" className="w-64 h-64"></i>
-                                </div>
-                                
-                                <div className="grid md:grid-cols-5 gap-8 items-center relative z-20">
-                                    <div className="md:col-span-3">
-                                        <div className="inline-block bg-blue-500 text-white text-[10px] px-4 py-1.5 rounded-full font-bold tracking-widest uppercase mb-4 shadow-lg shadow-blue-500/30 border border-blue-400">
-                                            Innovación para su Consultorio
-                                        </div>
-                                        <h2 className="text-3xl font-black text-white mb-4 leading-tight">
-                                            ¿Pierde tiempo valioso agendando pacientes por WhatsApp?
-                                        </h2>
-                                        <p className="text-blue-100 mb-6 text-sm leading-relaxed">
-                                            Como especialista en tecnologías, también digitalizo clínicas. Le ofrezco implementar una <strong>Plataforma de Citas Inteligente</strong> que permite a sus pacientes reservar 24/7, reduce las cancelaciones por olvido y proyecta una imagen premium de su consultorio odontológico.
-                                        </p>
-                                        
-                                        <ul className="space-y-3 mb-8">
-                                            <li className="flex items-center gap-3 text-sm text-slate-300">
-                                                <i data-lucide="zap" className="w-5 h-5 text-amber-400"></i>
-                                                <span><strong>Agenda Automatizada:</strong> Su clínica abierta para reservas siempre.</span>
-                                            </li>
-                                            <li className="flex items-center gap-3 text-sm text-slate-300">
-                                                <i data-lucide="trending-up" className="w-5 h-5 text-emerald-400"></i>
-                                                <span><strong>Menos Inasistencias:</strong> Sistema intuitivo que mejora el compromiso.</span>
-                                            </li>
-                                            <li className="flex items-center gap-3 text-sm text-slate-300">
-                                                <i data-lucide="smartphone" className="w-5 h-5 text-blue-400"></i>
-                                                <span><strong>Control Total:</strong> Administre sus consultas desde cualquier celular.</span>
-                                            </li>
-                                        </ul>
-
-                                        <div className="bg-slate-800/80 rounded-xl p-5 border border-blue-500/30 inline-block shadow-lg">
-                                            <p className="text-xs text-blue-300 uppercase tracking-wider mb-1 font-bold">Inversión del Sistema de Citas</p>
-                                            <div className="flex items-end gap-1">
-                                                <span className="text-3xl font-black text-white">$3,700</span>
-                                                <span className="text-sm font-medium text-slate-400 mb-1">.00 MXN</span>
-                                            </div>
-                                            <div className="mt-2 flex items-center gap-2 text-[10px] text-red-400 font-bold uppercase">
-                                                <i data-lucide="clock" className="w-3 h-3 animate-pulse"></i>
-                                                <span>Precio válido solo durante los 5 días de esta cotización</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <div className="md:col-span-2 flex flex-col justify-center">
-                                        <div className="bg-white/5 border border-white/10 rounded-2xl p-6 text-center backdrop-blur-md shadow-xl">
-                                            <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg shadow-blue-600/40">
-                                                <i data-lucide="layout-dashboard" className="w-8 h-8 text-white"></i>
-                                            </div>
-                                            <h3 className="text-white font-bold mb-2">Pruebe la Demo en Vivo</h3>
-                                            <p className="text-xs text-slate-400 mb-6">Interactúe con un prototipo del sistema diseñado para clínicas dentales.</p>
-                                            
-                                            <a 
-                                                href="https://oraneg12amsh-ui.github.io/Dental-Leyva/" 
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="w-full flex items-center justify-center gap-2 bg-blue-500 hover:bg-blue-400 text-white py-4 px-4 rounded-xl font-bold transition-all shadow-lg shadow-blue-500/25 group-hover:scale-105"
-                                            >
-                                                Ver Sistema de Citas
-                                                <i data-lucide="external-link" className="w-4 h-4"></i>
-                                            </a>
-                                        </div>
-                                    </div>
+                        {/* SECCIÓN DE TABLAS COMPARATIVAS */}
+                        
+                        <div className="mb-16">
+                            <h2 className="text-2xl font-black text-slate-800 mb-6 flex items-center gap-3">
+                                <i data-lucide="scale" className="w-6 h-6 text-blue-600"></i>
+                                Análisis Comparativo Específico
+                            </h2>
+                            <p className="text-sm text-slate-600 mb-6">Hemos preparado este análisis entre los dos sistemas más solicitados para ayudarle a tomar la mejor decisión según las necesidades de su propiedad en Perote.</p>
+                            
+                            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                                <div className="table-container overflow-x-auto w-full">
+                                    <table className="w-full text-left border-collapse">
+                                        <thead>
+                                            <tr className="bg-slate-50 text-slate-700 text-sm uppercase tracking-wider">
+                                                <th className="p-4 border-b border-slate-200 font-bold w-1/3">Característica</th>
+                                                <th className="p-4 border-b border-slate-200 font-bold w-1/3 bg-blue-50/50">
+                                                    <span className="text-blue-600 block">Inteligente 360°</span>
+                                                    <span className="text-[10px] text-slate-400 normal-case">(Recomendado Residencial)</span>
+                                                </th>
+                                                <th className="p-4 border-b border-slate-200 font-bold w-1/3">
+                                                    <span className="text-emerald-600 block">Negocio Total</span>
+                                                    <span className="text-[10px] text-slate-400 normal-case">(Ideal Comercial)</span>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="text-sm text-slate-600 divide-y divide-slate-100">
+                                            <tr className="hover:bg-slate-50 transition-colors">
+                                                <td className="p-4 font-semibold text-slate-800 flex items-center gap-2"><i data-lucide="move" className="w-4 h-4 text-slate-400"></i> Movimiento y Patrullaje</td>
+                                                <td className="p-4 bg-blue-50/30"><span className="text-emerald-600 font-bold flex items-center gap-1"><i data-lucide="check" className="w-4 h-4"></i> Sí (Giros 360°)</span></td>
+                                                <td className="p-4"><span className="text-red-500 font-bold flex items-center gap-1"><i data-lucide="x" className="w-4 h-4"></i> No (Fijas)</span></td>
+                                            </tr>
+                                            <tr className="hover:bg-slate-50 transition-colors">
+                                                <td className="p-4 font-semibold text-slate-800 flex items-center gap-2"><i data-lucide="bell-ring" className="w-4 h-4 text-slate-400"></i> Alarma Disuasiva Local</td>
+                                                <td className="p-4 bg-blue-50/30"><span className="text-emerald-600 font-bold flex items-center gap-1"><i data-lucide="check" className="w-4 h-4"></i> Luz y Sirena integradas</span></td>
+                                                <td className="p-4"><span className="text-red-500 font-bold flex items-center gap-1"><i data-lucide="x" className="w-4 h-4"></i> Solo grabación silenciosa</span></td>
+                                            </tr>
+                                            <tr className="hover:bg-slate-50 transition-colors">
+                                                <td className="p-4 font-semibold text-slate-800 flex items-center gap-2"><i data-lucide="hard-drive" className="w-4 h-4 text-slate-400"></i> Tipo de Grabación</td>
+                                                <td className="p-4 bg-blue-50/30">Tarjetas MicroSD Independientes</td>
+                                                <td className="p-4 font-semibold text-emerald-700">Disco Duro Centralizado 500GB</td>
+                                            </tr>
+                                            <tr className="hover:bg-slate-50 transition-colors">
+                                                <td className="p-4 font-semibold text-slate-800 flex items-center gap-2"><i data-lucide="mic" className="w-4 h-4 text-slate-400"></i> Audio Bidireccional</td>
+                                                <td className="p-4 bg-blue-50/30"><span className="text-emerald-600 font-bold flex items-center gap-1"><i data-lucide="check" className="w-4 h-4"></i> Puede hablar y escuchar</span></td>
+                                                <td className="p-4"><span className="text-red-500 font-bold flex items-center gap-1"><i data-lucide="x" className="w-4 h-4"></i> Sin audio integrado</span></td>
+                                            </tr>
+                                            <tr className="hover:bg-slate-50 transition-colors">
+                                                <td className="p-4 font-semibold text-slate-800 flex items-center gap-2"><i data-lucide="target" className="w-4 h-4 text-slate-400"></i> Conclusión / Uso Ideal</td>
+                                                <td className="p-4 bg-blue-50/30 text-blue-700 font-medium">Casas solas donde se requiere interactuar, patrullar y asustar intrusos a distancia.</td>
+                                                <td className="p-4 text-slate-700 font-medium">Puntos comerciales o pasillos fijos donde solo se busca revisar la grabación después.</td>
+                                            </tr>
+                                            <tr className="hover:bg-slate-50 transition-colors bg-blue-50/10">
+                                                <td className="p-4 font-black text-slate-800 flex items-center gap-2"><i data-lucide="dollar-sign" className="w-4 h-4 text-slate-400"></i> Inversión del Equipo</td>
+                                                <td className="p-4 bg-blue-50/50 font-black text-blue-700 text-lg">$3,650.00</td>
+                                                <td className="p-4 font-black text-emerald-700 text-lg">$4,150.00</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
-                        </section>
+                        </div>
+
+                        <div className="mb-16">
+                            <h3 className="text-xl font-bold text-slate-800 mb-4">Resumen General de Tecnologías</h3>
+                            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                                <div className="table-container overflow-x-auto w-full">
+                                    <table className="w-full text-left border-collapse whitespace-nowrap">
+                                        <thead>
+                                            <tr className="bg-slate-800 text-white text-xs uppercase tracking-wider">
+                                                <th className="p-3 font-medium">Categoría</th>
+                                                <th className="p-3 font-medium">Sistema</th>
+                                                <th className="p-3 font-medium text-emerald-300">Inversión</th>
+                                                <th className="p-3 font-medium">Resolución Visual</th>
+                                                <th className="p-3 font-medium text-center">Cableado Físico</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="text-sm text-slate-600 divide-y divide-slate-100">
+                                            <tr className="hover:bg-slate-50">
+                                                <td className="p-3 font-bold text-blue-600">Sistemas Dinámicos</td>
+                                                <td className="p-3">Inteligente 360° PTZ</td>
+                                                <td className="p-3 font-bold text-slate-800">$3,650.00</td>
+                                                <td className="p-3">Full HD (1080p)</td>
+                                                <td className="p-3 text-center"><span className="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs">Mínimo (Wi-Fi)</span></td>
+                                            </tr>
+                                            <tr className="hover:bg-slate-50">
+                                                <td className="p-3 font-bold text-slate-600" rowSpan="3">Sistemas Estándar</td>
+                                                <td className="p-3">Básico Multi-Cámara</td>
+                                                <td className="p-3 font-bold text-slate-800">$3,150.00</td>
+                                                <td className="p-3">HD / Full HD</td>
+                                                <td className="p-3 text-center"><span className="bg-slate-200 text-slate-700 px-2 py-1 rounded text-xs">Completo (Cable UTP)</span></td>
+                                            </tr>
+                                            <tr className="hover:bg-slate-50">
+                                                <td className="p-3">Profesional HiLook</td>
+                                                <td className="p-3 font-bold text-slate-800">$3,490.00</td>
+                                                <td className="p-3">HD (1080p Lite)</td>
+                                                <td className="p-3 text-center"><span className="bg-slate-200 text-slate-700 px-2 py-1 rounded text-xs">Completo (Cable UTP)</span></td>
+                                            </tr>
+                                            <tr className="hover:bg-slate-50">
+                                                <td className="p-3">Negocio Total</td>
+                                                <td className="p-3 font-bold text-slate-800">$4,150.00</td>
+                                                <td className="p-3">HD (1080p Lite)</td>
+                                                <td className="p-3 text-center"><span className="bg-slate-200 text-slate-700 px-2 py-1 rounded text-xs">Completo (Cable UTP)</span></td>
+                                            </tr>
+                                            <tr className="hover:bg-slate-50 bg-amber-50/30">
+                                                <td className="p-3 font-bold text-amber-600">Gama Alta</td>
+                                                <td className="p-3">Ultra HD 4MP</td>
+                                                <td className="p-3 font-black text-amber-600">$5,490.00</td>
+                                                <td className="p-3 font-bold text-amber-600">4 Megapíxeles (2X HD)</td>
+                                                <td className="p-3 text-center"><span className="bg-slate-200 text-slate-700 px-2 py-1 rounded text-xs">Completo (Cable UTP)</span></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* REQUISITO DE INTERNET */}
+                        <div className="bg-slate-800 rounded-2xl p-6 mb-16 shadow-lg flex flex-col md:flex-row items-center gap-6 border border-slate-700">
+                            <div className="bg-slate-700 p-4 rounded-full shrink-0">
+                                <i data-lucide="wifi" className="w-8 h-8 text-blue-400"></i>
+                            </div>
+                            <div>
+                                <h3 className="font-bold text-white text-lg mb-2">Requisito de Conectividad para Monitoreo</h3>
+                                <p className="text-sm text-slate-300 leading-relaxed">
+                                    Para configurar la visualización remota en su celular, es indispensable contar con un paquete de internet activo en la propiedad (del proveedor de su preferencia: fibra óptica, cable o ADSL). 
+                                </p>
+                                <div className="mt-3 bg-red-500/10 border border-red-500/20 p-3 rounded-lg flex items-start gap-2">
+                                    <i data-lucide="alert-circle" className="w-5 h-5 text-red-400 shrink-0 mt-0.5"></i>
+                                    <p className="text-xs text-red-200 leading-relaxed">
+                                        <strong className="text-red-400 uppercase tracking-wider font-bold">Aviso importante:</strong> Le pedimos <strong>evitar el internet satelital</strong>. Debido a su naturaleza tecnológica, este tipo de servicio genera pérdida de señal constante, desconexiones recurrentes y mucho retraso (lag) en la transmisión de video de seguridad.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
 
                         {/* Footer Info */}
-                        <section className="mt-16 bg-white rounded-3xl p-8 shadow-sm border border-slate-200 overflow-hidden relative">
+                        <section className="bg-white rounded-3xl p-8 shadow-sm border border-slate-200 overflow-hidden relative">
                             <div className="grid md:grid-cols-2 gap-12 items-center relative z-10">
                                 <div>
-                                    <h2 className="text-2xl font-bold mb-4 text-slate-800">Servicio para {CLIENT_NAME}</h2>
+                                    <h2 className="text-2xl font-bold mb-4 text-slate-800">Servicio Especializado</h2>
                                     <p className="text-slate-600 mb-6 leading-relaxed text-sm">
-                                        Como especialista técnico, garantizo que su sistema funcionará de forma óptima en su red local y podrá monitorearlo sin interrupciones desde su celular.
+                                        Como especialista técnico, garantizo que su sistema funcionará de forma óptima. Una vez instalado en Perote, le enseñaré a monitorear su propiedad sin interrupciones desde su celular.
                                     </p>
                                     <div className="space-y-3 text-xs font-bold uppercase">
                                         <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-xl text-blue-800 border border-blue-100">
-                                            Monitoreo Móvil Configurado
+                                            Monitoreo Remoto Configurado
                                         </div>
                                         <div className="flex items-center gap-3 p-3 bg-emerald-50 rounded-xl text-emerald-800 border border-emerald-100">
-                                            Soporte Técnico de Software
+                                            Instalación Profesional Foránea
                                         </div>
                                     </div>
                                 </div>
@@ -348,7 +494,7 @@
                                             <i data-lucide="phone" className="w-5 h-5 text-blue-400"></i>
                                             {PHONE_NUMBER}
                                         </a>
-                                        <button onClick={() => handleContact("un plan a medida")} className="flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 py-4 rounded-xl transition-all font-bold shadow-lg">
+                                        <button onClick={() => handleContact("Información de viaje a Perote")} className="flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 py-4 rounded-xl transition-all font-bold shadow-lg">
                                             <i data-lucide="message-circle" className="w-5 h-5"></i>
                                             WhatsApp Directo
                                         </button>
